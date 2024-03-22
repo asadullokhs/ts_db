@@ -3,6 +3,10 @@ import bcrypt from "bcrypt";
 import JWT from "jsonwebtoken";
 import User from "../model/userModel";
 
+const reportedError = (obj: {message : string}, res: Response)=> {
+  res.status(503).json({message: obj.message})
+}
+
 const JWT_SECRET_KEY: string = process.env.JWT_SECRET_KEY || "";
 
 const userCtrl = {
@@ -29,9 +33,12 @@ const userCtrl = {
         const token = await JWT.sign({id: newUser._id, name: newUser.name, email: newUser.email}, JWT_SECRET_KEY)
 
         res.status(201).json({message:"Successfully registered!", user: newUser, token})
-    } catch (error: any) {
-        console.error(error);
-        res.status(503).json({message: error.message})
+    } catch (error: object | unknown) {
+      console.error(error);
+      
+      if(error instanceof Error){
+          reportedError(error, res)
+      }
     }
    },
    login: async (req: Request, res: Response) => {
@@ -74,9 +81,12 @@ const userCtrl = {
       } else {
         res.status(403).send({ message: "Please fill all fields" });
       }
-    } catch (error: any) {
-      res.status(503).send({ message: error.message });
-      console.log(error);
+    } catch (error: object | unknown) {
+      console.error(error);
+      
+      if(error instanceof Error){
+          reportedError(error, res)
+      }
     }
    }
 }
