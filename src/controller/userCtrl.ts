@@ -34,8 +34,6 @@ const userCtrl = {
 
         res.status(201).json({message:"Successfully registered!", user: newUser, token})
     } catch (error: object | unknown) {
-      console.error(error);
-      
       if(error instanceof Error){
           reportedError(error, res)
       }
@@ -82,8 +80,6 @@ const userCtrl = {
         res.status(403).send({ message: "Please fill all fields" });
       }
     } catch (error: object | unknown) {
-      console.error(error);
-      
       if(error instanceof Error){
           reportedError(error, res)
       }
